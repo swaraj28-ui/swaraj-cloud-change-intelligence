@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Settings - Cloud Change Intelligence{% endblock %}
+
+{% block content %}
+<div class="top-header">
+    <div class="page-title">
+        <h1>System Configurations</h1>
+        <p>Administer cloud RSS sources, alert routing criteria, and dispatch destinations</p>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <!-- Left Column: Ingestion Feeds -->
+    <div class="left-col">
+        <div class="card">
+            <h3 class="detail-section-title">
+                <i class="fa-solid fa-square-rss" style="color: #6366F1; margin-right: 8px;"></i>
+                Ingested Release Feeds
+            </h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px;">
+                Manage the live XML feeds synchronized hourly by the background scheduler.
+            </p>
+            
+            <!-- Feeds List -->
+            <div id="sources-list-container">
+                <div class="spinner" style="margin: 40px auto;"></div>
+            </div>
+            
+            <!-- Add Feed Form -->
+            <div style="border-top: 1px solid var(--border-color); padding-top: 24px; margin-top: 28px;">
+                <h4 style="font-size: 1rem; margin-bottom: 16px; font-weight: 600;">Add Ingestion Feed</h4>
+                <div class="form-group">
+                    <label class="form-label" for="feed-name">Feed Label Name</label>
+                    <input type="text" id="feed-name" class="form-control" placeholder="e.g. AWS Security Bulletins">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="feed-url">RSS / XML URL Target</label>
+                    <input type="url" id="feed-url" class="form-control" placeholder="https://example.com/rss.xml">
+                </div>
+                <button class="btn btn-primary" id="btn-add-source" style="width: 100%; justify-content: center;">
+                    <i class="fa-solid fa-plus" style="margin-right: 6px;"></i> Add Feed Source
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Column: Alert Rules -->
+    <div class="right-col">
+        <div class="card">
+            <h3 class="detail-section-title">
+                <i class="fa-solid fa-bell" style="color: #3B82F6; margin-right: 8px;"></i>
+                Alert Notifications & Routing
+            </h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px;">
+                Configure real-time dispatch filters pointing to Slack spaces or emails.
+            </p>
+            
+            <!-- Rules List -->
+            <div id="rules-list-container">
+                <div class="spinner" style="margin: 40px auto;"></div>
+            </div>
+            
+            <!-- Add Rule Form -->
+            <div style="border-top: 1px solid var(--border-color); padding-top: 24px; margin-top: 28px;">
+                <h4 style="font-size: 1rem; margin-bottom: 16px; font-weight: 600;">Create Alert Routing Rule</h4>
+                <div class="form-group">
+                    <label class="form-label" for="rule-name">Rule Title / Description</label>
+                    <input type="text" id="rule-name" class="form-control" placeholder="e.g. Slack alerts for high severity updates">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                    <div>
+                        <label class="form-label" for="rule-cond-type">Trigger Criteria</label>
+                        <select id="rule-cond-type" class="form-control" style="background-color: var(--bg-sidebar); color: var(--text-primary);">
+                            <option value="severity">Severity Level (=)</option>
+                            <option value="category">Category Class (=)</option>
+                            <option value="impact_score">Impact Score (>=)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" for="rule-cond-value">Condition Value</label>
+                        <input type="text" id="rule-cond-value" class="form-control" placeholder="Critical / Security / 8">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                    <div>
+                        <label class="form-label" for="rule-channel">Alert Channel</label>
+                        <select id="rule-channel" class="form-control" style="background-color: var(--bg-sidebar); color: var(--text-primary);">
+                            <option value="slack">Slack Webhook</option>
+                            <option value="email">Email Alert Address</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" for="rule-recipient">Webhook URL / Recipient</label>
+                        <input type="text" id="rule-recipient" class="form-control" placeholder="https://hooks.slack.com/... or address">
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="btn-add-rule" style="width: 100%; justify-content: center;">
+                    <i class="fa-solid fa-circle-plus" style="margin-right: 6px;"></i> Create Alert Rule
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+{% endblock %}

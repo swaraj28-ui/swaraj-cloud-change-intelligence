@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cloud Change Intelligence{% endblock %}</title>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div class="brand-name">Cloud Change IQ</div>
+            </div>
+            
+            <nav>
+                <ul class="nav-links">
+                    <li class="nav-item {% if request.path == '/' or request.path == '/dashboard' %}active{% endif %}">
+                        <a href="{{ url_for('web.dashboard') }}">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item {% if request.path == '/search' %}active{% endif %}">
+                        <a href="{{ url_for('web.search_page') }}">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <span>AI Search</span>
+                        </a>
+                    </li>
+                    <li class="nav-item {% if request.path == '/analytics' %}active{% endif %}">
+                        <a href="{{ url_for('web.analytics') }}">
+                            <i class="fa-solid fa-chart-pie"></i>
+                            <span>Trend Analytics</span>
+                        </a>
+                    </li>
+                    <li class="nav-item {% if request.path == '/settings' %}active{% endif %}">
+                        <a href="{{ url_for('web.settings') }}">
+                            <i class="fa-solid fa-sliders"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="sync-status">
+                    <i class="fa-solid fa-rotate"></i>
+                    <span id="last-sync-text">Loading sync...</span>
+                </div>
+                <button class="btn btn-secondary btn-sm" id="btn-sync-now" style="padding: 6px 12px; font-size: 0.8rem; justify-content: center; width: 100%;">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                    Sync Feeds
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Base JS -->
+    <script>
+        // Global Sync Action Handler
+        document.getElementById('btn-sync-now').addEventListener('click', async () => {
+            const btn = document.getElementById('btn-sync-now');
+            const icon = btn.querySelector('.fa-arrows-rotate');
+            btn.disabled = true;
+            icon.classList.add('fa-spin');
+            
+            try {
+                const response = await fetch('/api/refresh', { method: 'POST' });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Feed aggregation and analysis job successfully triggered in background.');
+                    // Refresh status text
+                    const dateStr = new Date().toLocaleTimeString();
+                    document.getElementById('last-sync-text').innerText = 'Synced: ' + dateStr;
+                    localStorage.setItem('cci_last_sync', dateStr);
+                } else {
+                    alert('Sync failed: ' + result.error);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Connection failure triggering sync.');
+            } finally {
+                btn.disabled = false;
+                icon.classList.remove('fa-spin');
+            }
+        });
+
+        // Set last sync display on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const cached = localStorage.getItem('cci_last_sync') || 'Never';
+            document.getElementById('last-sync-text').innerText = 'Synced: ' + cached;
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

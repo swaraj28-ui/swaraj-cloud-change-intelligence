@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Search - Cloud Change Intelligence{% endblock %}
+
+{% block content %}
+<div class="top-header">
+    <div class="page-title">
+        <h1>AI Semantic Search</h1>
+        <p>Query cloud platform changes using natural conversational English</p>
+    </div>
+</div>
+
+<div class="card">
+    <!-- Search Query Block -->
+    <div class="form-group" style="margin-bottom: 28px;">
+        <label for="ai-search-query" class="form-label" style="font-weight: 600;">Describe what you are looking for:</label>
+        <div style="display: flex; gap: 12px; align-items: center; position: relative;">
+            <div class="search-input-wrapper" style="flex: 1;">
+                <i class="fa-solid fa-wand-magic-sparkles search-icon" style="color: #818CF8;"></i>
+                <input type="text" id="ai-search-query" class="search-input" style="padding-left: 40px; font-size: 1rem; padding-top: 12px; padding-bottom: 12px;" placeholder="e.g. Show deprecations from the last 3 months, or tell me about BigQuery security patches.">
+            </div>
+            <button class="btn btn-primary" id="btn-search-submit" style="padding: 12px 24px; font-size: 0.95rem;">
+                <i class="fa-solid fa-magnifying-glass"></i> Search
+            </button>
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">
+            <i class="fa-solid fa-lightbulb" style="margin-right: 4px; color: var(--accent-warning);"></i>
+            Gemini searches semantically by analyzing context, intent, and impact metadata rather than just strict keywords.
+        </p>
+    </div>
+    
+    <!-- Results Table -->
+    <div class="table-container" style="display: none;" id="search-results-wrapper">
+        <table class="releases-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Feed Source</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th style="text-align: center;">Impact Score</th>
+                    <th>Severity</th>
+                </tr>
+            </thead>
+            <tbody id="search-results-tbody">
+                <!-- Populate dynamically -->
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Search state placeholders -->
+    <div id="search-placeholder" style="text-align: center; color: var(--text-muted); padding: 80px 0;">
+        <i class="fa-solid fa-brain" style="font-size: 3rem; margin-bottom: 16px; opacity: 0.25;"></i>
+        <p style="font-size: 1rem;">Awaiting your search query. Try typing something like "security" or "data pipeline updates".</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+{% endblock %}

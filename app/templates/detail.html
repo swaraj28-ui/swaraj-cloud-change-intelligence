@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ release.title }} - Cloud Change Intelligence{% endblock %}
+
+{% block content %}
+<!-- Page Header Action Bar -->
+<div class="top-header">
+    <div class="page-title">
+        <h1 style="max-width: 900px; line-height: 1.3;">{{ release.title }}</h1>
+        <p>
+            <a href="{{ url_for('web.dashboard') }}" style="color: var(--accent-primary); text-decoration: none; font-weight: 600;">
+                <i class="fa-solid fa-arrow-left" style="margin-right: 6px;"></i> Back to Dashboard
+            </a>
+        </p>
+    </div>
+    <div class="actions-cell">
+        <button class="btn btn-secondary" id="btn-reanalyze" data-id="{{ release.id }}">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            Re-analyze
+        </button>
+        <a href="{{ release.link }}" target="_blank" class="btn btn-primary">
+            <i class="fa-solid fa-external-link"></i>
+            Original Source
+        </a>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <!-- Left Column: Core Analysis and Original Text -->
+    <div class="left-col">
+        <!-- AI Executive Summary Card -->
+        <div class="card highlight-box">
+            <h3 class="detail-section-title" style="margin-bottom: 8px;">
+                <i class="fa-solid fa-robot"></i> Executive Summary
+            </h3>
+            <p style="font-size: 1.05rem; line-height: 1.6; color: var(--text-primary);" id="ai-summary">
+                {{ release.ai_analysis.executive_summary if release.ai_analysis else "Not yet analyzed." }}
+            </p>
+        </div>
+
+        <!-- Why This Matters Card -->
+        <div class="card">
+            <h3 class="detail-section-title">
+                <i class="fa-solid fa-circle-question"></i> Why This Matters
+            </h3>
+            <div class="content-block" id="ai-why" style="background-color: transparent; border: none; padding: 0;">
+                {{ release.ai_analysis.why_it_matters if release.ai_analysis else "Not yet analyzed." }}
+            </div>
+        </div>
+
+        <!-- Recommended Actions Card -->
+        <div class="card">
+            <h3 class="detail-section-title">
+                <i class="fa-solid fa-square-check"></i> Recommended Actions
+            </h3>
+            <div class="content-block" id="ai-action" style="background-color: transparent; border: none; padding: 0;">
+                {{ release.ai_analysis.recommended_action if release.ai_analysis else "Not yet analyzed." }}
+            </div>
+        </div>
+
+        <!-- Original Release Note Content -->
+        <div class="card">
+            <h3 class="detail-section-title">
+                <i class="fa-solid fa-file-lines"></i> Original Provider Update
+            </h3>
+            <div class="content-block">
+                {{ release.content | safe }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Metrics, Meta and Social Content Generator -->
+    <div class="right-col">
+        <!-- Impact Stats Card -->
+        <div class="card">
+            <h3 class="detail-section-title">
+                <i class="fa-solid fa-gauge-high"></i> Impact Metrics
+            </h3>
+            
+            <ul class="meta-info-list" style="margin-top: 16px;">
+                <li class="meta-info-item">
+                    <span class="meta-label">Severity Level</span>
+                    <span class="badge badge-{{ release.ai_analysis.severity.lower() if release.ai_analysis else 'low' }}" id="meta-severity">
+                        {{ release.ai_analysis.severity if release.ai_analysis else 'Low' }}
+                    </span>
+                </li>
+                <li class="meta-info-item">
+                    <span class="meta-label">Urgency Score</span>
+                    <span class="meta-value" style="font-weight: 700; font-size: 1.1rem;" id="meta-score">
+                        {{ release.ai_analysis.impact_score if release.ai_analysis else '0' }} / 10
+                    </span>
+                </li>
+                <li class="meta-info-item">
+                    <span class="meta-label">Category Class</span>
+                    <span class="badge badge-category" id="meta-category">
+                        {{ release.ai_analysis.category if release.ai_analysis else 'Unknown' }}
+                    </span>
+                </li>
+                <li class="meta-info-item">
+                    <span class="meta-label">Feed Source</span>
+                    <span class="meta-value">{{ release.source.name }}</span>
+                </li>
+                <li class="meta-info-item">
+                    <span class="meta-label">Date Published</span>
+                    <span class="meta-value">{{ release.published_date.strftime('%B %d, %Y') }}</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Social Media Post Generator Card -->
+        <div class="card">
+            <h3 class="detail-section-title">
+                <i class="fa-solid fa-share-nodes"></i> Share Content Generator
+            </h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
+                Auto-generate professional distributions tailored for Slack, social networks, or internal documentation.
+            </p>
+            
+            <!-- Social Tabs -->
+            <div class="social-tabs">
+                <button class="social-tab active" data-tab="twitter">Twitter / X</button>
+                <button class="social-tab" data-tab="linkedin">LinkedIn</button>
+                <button class="social-tab" data-tab="blog">Dev Blog</button>
+            </div>
+            
+            <!-- Output container -->
+            <div style="position: relative;">
+                <div class="social-box" id="social-content-output">Generating draft copy...</div>
+                <button class="copy-btn" id="btn-copy-social">
+                    <i class="fa-regular fa-copy"></i> Copy
+                </button>
+            </div>
+            <span class="char-counter" id="char-count">0 characters</span>
+
+            <button class="btn btn-secondary" id="btn-regenerate-social" style="width: 100%; margin-top: 16px; justify-content: center;">
+                <i class="fa-solid fa-arrows-rotate"></i> Regenerate Content
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/detail.js') }}"></script>
+{% endblock %}

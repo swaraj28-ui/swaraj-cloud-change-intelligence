@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Cloud Change Intelligence{% endblock %}
+
+{% block content %}
+<div class="top-header">
+    <div class="page-title">
+        <h1>Cloud Change Intelligence</h1>
+        <p>Continuous monitoring of cloud providers updates and AI-driven severity evaluation</p>
+    </div>
+</div>
+
+<!-- Overview Stats Cards -->
+<div class="metrics-grid">
+    <div class="metric-card accent">
+        <span class="metric-title">Total Updates</span>
+        <span class="metric-value" id="stat-total">{{ total_updates }}</span>
+    </div>
+    <div class="metric-card" style="border-left: 4px solid var(--accent-critical);">
+        <span class="metric-title" style="color: var(--badge-crit-text);">Critical Updates</span>
+        <span class="metric-value" id="stat-critical">{{ critical_updates }}</span>
+    </div>
+    <div class="metric-card">
+        <span class="metric-title">New (7 Days)</span>
+        <span class="metric-value" id="stat-weekly">{{ new_this_week }}</span>
+    </div>
+    <div class="metric-card">
+        <span class="metric-title">Active Feeds</span>
+        <span class="metric-value" id="stat-sources">{{ sources_monitored }}</span>
+    </div>
+</div>
+
+<!-- Releases Section -->
+<div class="card">
+    <div class="card-header">
+        <span class="card-title">
+            <i class="fa-solid fa-list-check" style="margin-right: 8px;"></i>
+            Latest Cloud Updates
+        </span>
+    </div>
+    
+    <!-- Controls Bar -->
+    <div class="controls-bar">
+        <!-- Title/Content Search -->
+        <div class="search-input-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="dashboard-search" class="search-input" placeholder="Search title or details...">
+        </div>
+        
+        <!-- Service Filter -->
+        <select id="filter-service" class="filter-select">
+            <option value="">All Feeds</option>
+            {% for src in sources %}
+            <option value="{{ src.id }}">{{ src.name }}</option>
+            {% endfor %}
+        </select>
+        
+        <!-- Category Filter -->
+        <select id="filter-category" class="filter-select">
+            <option value="">All Categories</option>
+            <option value="Security">Security</option>
+            <option value="Cost Optimization">Cost Optimization</option>
+            <option value="AI/ML">AI/ML</option>
+            <option value="Data Engineering">Data Engineering</option>
+            <option value="Infrastructure">Infrastructure</option>
+            <option value="Deprecation">Deprecation</option>
+            <option value="Breaking Change">Breaking Change</option>
+            <option value="Feature Launch">Feature Launch</option>
+            <option value="Compliance">Compliance</option>
+        </select>
+        
+        <!-- Severity Filter -->
+        <select id="filter-severity" class="filter-select">
+            <option value="">All Severities</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
+        </select>
+        
+        <!-- Sorting Criteria -->
+        <select id="sort-by" class="filter-select">
+            <option value="date">Sort by Date (Newest)</option>
+            <option value="impact_score">Sort by Impact (Highest)</option>
+        </select>
+    </div>
+    
+    <!-- Table Display -->
+    <div class="table-container">
+        <table class="releases-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Feed Source</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th style="text-align: center;">Impact Score</th>
+                    <th>Severity</th>
+                </tr>
+            </thead>
+            <tbody id="releases-tbody">
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 48px 0;">
+                        <div class="spinner" style="margin: 0 auto 16px;"></div>
+                        Loading release data feed...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
